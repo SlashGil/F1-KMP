@@ -1,0 +1,35 @@
+CREATE TABLE DriverEntity (
+    driverId TEXT PRIMARY KEY NOT NULL,
+    permanentNumber TEXT,
+    code TEXT,
+    url TEXT NOT NULL,
+    givenName TEXT NOT NULL,
+    familyName TEXT NOT NULL,
+    dateOfBirth TEXT NOT NULL,
+    nationality TEXT NOT NULL
+);
+
+CREATE TABLE RaceEntity (
+    season TEXT NOT NULL,
+    round INTEGER NOT NULL,
+    url TEXT NOT NULL,
+    raceName TEXT NOT NULL,
+    circuitName TEXT NOT NULL,
+    date TEXT NOT NULL,
+    time TEXT,
+    PRIMARY KEY(season, round)
+);
+
+selectAllDrivers:
+SELECT * FROM DriverEntity;
+
+insertDriver:
+INSERT OR REPLACE INTO DriverEntity(driverId, permanentNumber, code, url, givenName, familyName, dateOfBirth, nationality)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+selectRacesBySeason:
+SELECT * FROM RaceEntity WHERE season = ? ORDER BY round ASC;
+
+insertRace:
+INSERT OR REPLACE INTO RaceEntity(season, round, url, raceName, circuitName, date, time)
+VALUES (?, ?, ?, ?, ?, ?, ?);
