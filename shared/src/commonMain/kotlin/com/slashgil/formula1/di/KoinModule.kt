@@ -12,6 +12,7 @@ import com.slashgil.formula1.domain.usecase.GetDriverStandingsUseCase
 import com.slashgil.formula1.domain.usecase.GetDriversUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceResultsUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceScheduleUseCase
+import com.slashgil.formula1.ui.F1ViewModel
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
@@ -50,13 +51,18 @@ val domainModule = module {
     factory { GetRaceResultsUseCase(get()) }
 }
 
+val viewModelModule = module {
+    factory { F1ViewModel(get(), get(), get()) }
+}
+
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =
     startKoin {
         appDeclaration()
         modules(
             networkModule,
             dataModule,
-            domainModule
+            domainModule,
+            viewModelModule
         )
     }
 
@@ -67,6 +73,7 @@ fun initKoinWithPlatform(platformModule: Module, appDeclaration: KoinAppDeclarat
             platformModule,
             networkModule,
             dataModule,
-            domainModule
+            domainModule,
+            viewModelModule
         )
     }
