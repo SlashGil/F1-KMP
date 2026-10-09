@@ -14,22 +14,55 @@ CREATE TABLE RaceEntity (
     round INTEGER NOT NULL,
     url TEXT NOT NULL,
     raceName TEXT NOT NULL,
+    circuitId TEXT NOT NULL,
     circuitName TEXT NOT NULL,
     date TEXT NOT NULL,
     time TEXT,
     PRIMARY KEY(season, round)
 );
 
+CREATE TABLE DriverStandingEntity (
+    season TEXT NOT NULL,
+    driverId TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    positionText TEXT NOT NULL,
+    points REAL NOT NULL,
+    wins INTEGER NOT NULL,
+    PRIMARY KEY(season, driverId)
+);
+
+-- Queries for DriverEntity
 selectAllDrivers:
 SELECT * FROM DriverEntity;
+
+selectDriverById:
+SELECT * FROM DriverEntity WHERE driverId = ?;
 
 insertDriver:
 INSERT OR REPLACE INTO DriverEntity(driverId, permanentNumber, code, url, givenName, familyName, dateOfBirth, nationality)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
 
+clearDrivers:
+DELETE FROM DriverEntity;
+
+-- Queries for RaceEntity
 selectRacesBySeason:
 SELECT * FROM RaceEntity WHERE season = ? ORDER BY round ASC;
 
 insertRace:
-INSERT OR REPLACE INTO RaceEntity(season, round, url, raceName, circuitName, date, time)
-VALUES (?, ?, ?, ?, ?, ?, ?);
+INSERT OR REPLACE INTO RaceEntity(season, round, url, raceName, circuitId, circuitName, date, time)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+
+clearRacesBySeason:
+DELETE FROM RaceEntity WHERE season = ?;
+
+-- Queries for DriverStandingEntity
+selectDriverStandingsBySeason:
+SELECT * FROM DriverStandingEntity WHERE season = ? ORDER BY position ASC;
+
+insertDriverStanding:
+INSERT OR REPLACE INTO DriverStandingEntity(season, driverId, position, positionText, points, wins)
+VALUES (?, ?, ?, ?, ?, ?);
+
+clearDriverStandingsBySeason:
+DELETE FROM DriverStandingEntity WHERE season = ?;
