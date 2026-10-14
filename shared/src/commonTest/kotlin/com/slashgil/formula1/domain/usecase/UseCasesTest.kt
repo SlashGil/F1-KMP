@@ -1,5 +1,7 @@
 package com.slashgil.formula1.domain.usecase
 
+import com.slashgil.formula1.data.remote.dto.WikipediaImageDto
+import com.slashgil.formula1.data.remote.dto.WikipediaSummaryDto
 import com.slashgil.formula1.domain.model.Circuit
 import com.slashgil.formula1.domain.model.Constructor
 import com.slashgil.formula1.domain.model.ConstructorStanding
@@ -22,6 +24,11 @@ class FakeF1Repository : F1Repository {
     val sampleRaceResult = RaceResult("1", 1, "1", 25.0, sampleDriver, sampleConstructor)
     val sampleDriverStanding = DriverStanding(1, "1", 25.0, 1, sampleDriver, listOf(sampleConstructor))
     val sampleConstructorStanding = ConstructorStanding(1, "1", 25.0, 1, sampleConstructor)
+    val sampleWikiSummary = WikipediaSummaryDto(
+        title = "Max Verstappen",
+        extract = "Max Emilian Verstappen is a Dutch racing driver.",
+        thumbnail = WikipediaImageDto("https://example.com/verstappen.jpg", 320, 427)
+    )
 
     override suspend fun getDrivers(season: String?): Result<List<Driver>> = Result.success(listOf(sampleDriver))
     override suspend fun getDriverDetails(driverId: String): Result<Driver> = Result.success(sampleDriver)
@@ -30,6 +37,7 @@ class FakeF1Repository : F1Repository {
     override suspend fun getRaceResults(season: String, round: Int): Result<List<RaceResult>> = Result.success(listOf(sampleRaceResult))
     override suspend fun getDriverStandings(season: String): Result<List<DriverStanding>> = Result.success(listOf(sampleDriverStanding))
     override suspend fun getConstructorStandings(season: String): Result<List<ConstructorStanding>> = Result.success(listOf(sampleConstructorStanding))
+    override suspend fun getWikipediaSummary(wikiUrl: String): Result<WikipediaSummaryDto> = Result.success(sampleWikiSummary)
 }
 
 class UseCasesTest {
@@ -76,5 +84,13 @@ class UseCasesTest {
         val result = useCase("2026", 1)
         assertTrue(result.isSuccess)
         assertEquals(1, result.getOrNull()?.first()?.position)
+    }
+
+    @Test
+    fun testGetWikipediaSummaryUseCase() = runTest {
+        val useCase = GetWikipediaSummaryUseCase(fakeRepository)
+        val result = useCase("http://en.wikipedia.org/wiki/Max_Verstappen")
+        assertTrue(result.isSuccess)
+        assertEquals("Max Verstappen", result.getOrNull()?.title)
     }
 }

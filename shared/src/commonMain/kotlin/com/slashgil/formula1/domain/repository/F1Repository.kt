@@ -1,5 +1,6 @@
 package com.slashgil.formula1.domain.repository
 
+import com.slashgil.formula1.data.remote.dto.WikipediaSummaryDto
 import com.slashgil.formula1.domain.model.Constructor
 import com.slashgil.formula1.domain.model.ConstructorStanding
 import com.slashgil.formula1.domain.model.Driver
@@ -15,4 +16,5 @@ interface F1Repository {
     suspend fun getRaceResults(season: String, round: Int): Result<List<RaceResult>>
     suspend fun getDriverStandings(season: String): Result<List<DriverStanding>>
     suspend fun getConstructorStandings(season: String): Result<List<ConstructorStanding>>
+    suspend fun getWikipediaSummary(wikiUrl: String): Result<WikipediaSummaryDto>
 }
