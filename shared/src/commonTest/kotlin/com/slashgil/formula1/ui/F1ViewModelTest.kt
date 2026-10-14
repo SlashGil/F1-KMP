@@ -1,10 +1,11 @@
 package com.slashgil.formula1.ui
 
 import com.slashgil.formula1.domain.usecase.FakeF1Repository
-import com.slashgil.formula1.domain.usecase.GetConstructorStandingsUseCase
 import com.slashgil.formula1.domain.usecase.GetDriverStandingsUseCase
 import com.slashgil.formula1.domain.usecase.GetDriversUseCase
+import com.slashgil.formula1.domain.usecase.GetRaceResultsUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceScheduleUseCase
+import com.slashgil.formula1.domain.usecase.GetWikipediaSummaryUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -38,7 +39,10 @@ class F1ViewModelTest {
         val viewModel = F1ViewModel(
             getDriversUseCase = GetDriversUseCase(fakeRepository),
             getDriverStandingsUseCase = GetDriverStandingsUseCase(fakeRepository),
-            getRaceScheduleUseCase = GetRaceScheduleUseCase(fakeRepository)
+            getRaceScheduleUseCase = GetRaceScheduleUseCase(fakeRepository),
+            getRaceResultsUseCase = GetRaceResultsUseCase(fakeRepository),
+            getWikipediaSummaryUseCase = GetWikipediaSummaryUseCase(fakeRepository),
+            ioDispatcher = testDispatcher
         )
 
         testDispatcher.scheduler.advanceUntilIdle()
@@ -56,7 +60,10 @@ class F1ViewModelTest {
         val viewModel = F1ViewModel(
             getDriversUseCase = GetDriversUseCase(fakeRepository),
             getDriverStandingsUseCase = GetDriverStandingsUseCase(fakeRepository),
-            getRaceScheduleUseCase = GetRaceScheduleUseCase(fakeRepository)
+            getRaceScheduleUseCase = GetRaceScheduleUseCase(fakeRepository),
+            getRaceResultsUseCase = GetRaceResultsUseCase(fakeRepository),
+            getWikipediaSummaryUseCase = GetWikipediaSummaryUseCase(fakeRepository),
+            ioDispatcher = testDispatcher
         )
 
         testDispatcher.scheduler.advanceUntilIdle()
