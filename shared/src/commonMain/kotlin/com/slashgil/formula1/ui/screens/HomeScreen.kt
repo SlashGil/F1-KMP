@@ -36,12 +36,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.slashgil.formula1.domain.model.Constructor
+import com.slashgil.formula1.domain.model.ConstructorStanding
 import com.slashgil.formula1.domain.model.Driver
 import com.slashgil.formula1.domain.model.DriverStanding
 import com.slashgil.formula1.domain.model.Race
 import com.slashgil.formula1.ui.F1Tab
 import com.slashgil.formula1.ui.F1UiState
 import com.slashgil.formula1.ui.F1ViewModel
+import com.slashgil.formula1.ui.StandingsType
 import com.slashgil.formula1.ui.theme.F1Dark
 import com.slashgil.formula1.ui.theme.F1Red
 import com.slashgil.formula1.ui.theme.F1Surface
@@ -121,8 +123,11 @@ fun HomeScreen(
 
                         when (state.selectedTab) {
                             F1Tab.STANDINGS -> StandingsTab(
-                                standings = state.standings,
+                                standingsType = state.standingsType,
+                                driverStandings = state.standings,
+                                constructorStandings = state.constructorStandings,
                                 isLoading = state.isStandingsLoading,
+                                onStandingsTypeSelected = { viewModel.selectStandingsType(it) },
                                 onStandingClicked = { onDriverClick(it.driver) },
                                 onConstructorClicked = { onConstructorClick(it) }
                             )
@@ -237,25 +242,93 @@ fun TabSelector(
 
 @Composable
 fun StandingsTab(
-    standings: List<DriverStanding>,
+    standingsType: StandingsType,
+    driverStandings: List<DriverStanding>,
+    constructorStandings: List<ConstructorStanding>,
     isLoading: Boolean,
+    onStandingsTypeSelected: (StandingsType) -> Unit,
     onStandingClicked: (DriverStanding) -> Unit,
     onConstructorClicked: (Constructor) -> Unit
 ) {
-    if (isLoading && standings.isEmpty()) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator(color = F1Red)
-        }
-    } else if (standings.isEmpty()) {
-        EmptyMessage("No Standings Available")
-    } else {
-        LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            items(standings) { standing ->
-                StandingCard(
-                    standing = standing,
-                    onStandingClicked = { onStandingClicked(standing) },
-                    onConstructorClicked = { constructor -> onConstructorClicked(constructor) }
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(6.dp))
+                .background(F1SurfaceVariant)
+                .padding(2.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(if (standingsType == StandingsType.DRIVERS) F1Red else Color.Transparent)
+                    .clickable { onStandingsTypeSelected(StandingsType.DRIVERS) }
+                    .padding(vertical = 6.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "DRIVERS",
+                    color = if (standingsType == StandingsType.DRIVERS) Color.White else F1TextSecondary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp
                 )
+            }
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(if (standingsType == StandingsType.CONSTRUCTORS) F1Red else Color.Transparent)
+                    .clickable { onStandingsTypeSelected(StandingsType.CONSTRUCTORS) }
+                    .padding(vertical = 6.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "TEAMS / CONSTRUCTORS",
+                    color = if (standingsType == StandingsType.CONSTRUCTORS) Color.White else F1TextSecondary,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 11.sp
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        if (standingsType == StandingsType.DRIVERS) {
+            if (isLoading && driverStandings.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = F1Red)
+                }
+            } else if (driverStandings.isEmpty()) {
+                EmptyMessage("No Driver Standings Available")
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(driverStandings) { standing ->
+                        StandingCard(
+                            standing = standing,
+                            onStandingClicked = { onStandingClicked(standing) },
+                            onConstructorClicked = { constructor -> onConstructorClicked(constructor) }
+                        )
+                    }
+                }
+            }
+        } else {
+            if (isLoading && constructorStandings.isEmpty()) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator(color = F1Red)
+                }
+            } else if (constructorStandings.isEmpty()) {
+                EmptyMessage("No Constructor Standings Available")
+            } else {
+                LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    items(constructorStandings) { standing ->
+                        ConstructorStandingCard(
+                            standing = standing,
+                            onConstructorClicked = { onConstructorClicked(standing.constructor) }
+                        )
+                    }
+                }
             }
         }
     }
@@ -317,6 +390,76 @@ fun StandingCard(
                     modifier = Modifier.clickable {
                         if (constructor != null) onConstructorClicked(constructor)
                     }
+                )
+            }
+
+            Column(horizontalAlignment = Alignment.End) {
+                Text(
+                    text = "${standing.points} PTS",
+                    color = F1Red,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 13.sp
+                )
+                Text(
+                    text = "${standing.wins} WINS",
+                    color = F1TextSecondary,
+                    fontSize = 10.sp
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ConstructorStandingCard(
+    standing: ConstructorStanding,
+    onConstructorClicked: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(6.dp))
+            .background(F1Surface)
+            .border(1.dp, F1SurfaceVariant, RoundedCornerShape(6.dp))
+            .clickable { onConstructorClicked() }
+            .padding(10.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .width(32.dp)
+                    .height(32.dp)
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(if (standing.position == 1) F1Red else F1SurfaceVariant),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = standing.position.toString().padStart(2, '0'),
+                    color = Color.White,
+                    fontWeight = FontWeight.Black,
+                    fontSize = 13.sp
+                )
+            }
+
+            Spacer(modifier = Modifier.width(10.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = standing.constructor.name.uppercase(),
+                    color = F1TextPrimary,
+                    fontWeight = FontWeight.Black,
+                    fontStyle = FontStyle.Italic,
+                    fontSize = 15.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = standing.constructor.nationality.uppercase(),
+                    color = F1TextSecondary,
+                    fontSize = 11.sp
                 )
             }
 

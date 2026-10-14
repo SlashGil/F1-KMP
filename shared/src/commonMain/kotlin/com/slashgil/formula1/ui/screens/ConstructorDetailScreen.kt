@@ -1,6 +1,7 @@
 package com.slashgil.formula1.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,12 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.slashgil.formula1.domain.model.Constructor
+import com.slashgil.formula1.domain.model.Driver
 import com.slashgil.formula1.ui.DetailItem
 import com.slashgil.formula1.ui.F1UiState
 import com.slashgil.formula1.ui.F1ViewModel
+import com.slashgil.formula1.ui.components.StatBox
 import com.slashgil.formula1.ui.theme.F1Dark
 import com.slashgil.formula1.ui.theme.F1Red
 import com.slashgil.formula1.ui.theme.F1Surface
+import com.slashgil.formula1.ui.theme.F1SurfaceVariant
 import com.slashgil.formula1.ui.theme.F1TextPrimary
 import com.slashgil.formula1.ui.theme.F1TextSecondary
 import com.slashgil.formula1.ui.theme.F1Theme
@@ -48,18 +53,18 @@ import com.slashgil.formula1.ui.theme.F1Theme
 fun ConstructorDetailScreen(
     constructorId: String,
     viewModel: F1ViewModel,
+    onDriverClick: (Driver) -> Unit,
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val state = uiState as? F1UiState.Success
 
     LaunchedEffect(constructorId) {
-        val standing = state?.standings?.firstOrNull {
-            it.constructors.any { c -> c.constructorId == constructorId }
-        }
-        val constructor = standing?.constructors?.firstOrNull { it.constructorId == constructorId }
+        val standing = state?.constructorStandings?.firstOrNull { it.constructor.constructorId == constructorId }
+            ?: state?.standings?.firstOrNull { it.constructors.any { c -> c.constructorId == constructorId } }?.constructors?.firstOrNull { it.constructorId == constructorId }?.let { null }
+        val constructor = standing?.constructor
             ?: Constructor(constructorId, name = constructorId.replace("_", " ").uppercase())
-        viewModel.openConstructorDetail(constructor)
+        viewModel.openConstructorDetail(constructor, standing)
     }
 
     val detail = state?.selectedDetail as? DetailItem.ConstructorDetail
@@ -147,7 +152,76 @@ fun ConstructorDetailScreen(
                         fontWeight = FontWeight.Bold
                     )
 
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    if (detail.standing != null) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            StatBox(label = "POSITION", value = "P${detail.standing.position}")
+                            StatBox(label = "POINTS", value = "${detail.standing.points}")
+                            StatBox(label = "WINS", value = "${detail.standing.wins}")
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    // Team Drivers Section
+                    if (detail.isLoadingDrivers) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(80.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = F1Red)
+                        }
+                    } else if (detail.teamDrivers.isNotEmpty()) {
+                        Text(text = "DRIVER LINEUP", color = F1TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        detail.teamDrivers.forEach { driver ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(F1Surface)
+                                    .border(1.dp, F1SurfaceVariant, RoundedCornerShape(6.dp))
+                                    .clickable { onDriverClick(driver) }
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(4.dp)
+                                        .height(36.dp)
+                                        .background(F1Red)
+                                )
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = driver.permanentNumber ?: driver.code ?: "--",
+                                    color = F1Red,
+                                    fontWeight = FontWeight.Black,
+                                    fontSize = 15.sp,
+                                    modifier = Modifier.width(36.dp)
+                                )
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = driver.fullName.uppercase(),
+                                        color = F1TextPrimary,
+                                        fontWeight = FontWeight.Bold,
+                                        fontStyle = FontStyle.Italic,
+                                        fontSize = 13.sp
+                                    )
+                                    Text(
+                                        text = driver.nationality,
+                                        color = F1TextSecondary,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
 
                     if (wiki?.extract != null) {
                         Text(text = "OVERVIEW", color = F1TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)

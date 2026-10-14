@@ -1,8 +1,12 @@
 package com.slashgil.formula1.ui
 
 import com.slashgil.formula1.domain.usecase.FakeF1Repository
+import com.slashgil.formula1.domain.usecase.GetConstructorDriversBySeasonUseCase
+import com.slashgil.formula1.domain.usecase.GetConstructorStandingsUseCase
+import com.slashgil.formula1.domain.usecase.GetDriverResultsBySeasonUseCase
 import com.slashgil.formula1.domain.usecase.GetDriverStandingsUseCase
 import com.slashgil.formula1.domain.usecase.GetDriversUseCase
+import com.slashgil.formula1.domain.usecase.GetPitStopsUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceResultsUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceScheduleUseCase
 import com.slashgil.formula1.domain.usecase.GetWikipediaSummaryUseCase
@@ -39,9 +43,13 @@ class F1ViewModelTest {
         val viewModel = F1ViewModel(
             getDriversUseCase = GetDriversUseCase(fakeRepository),
             getDriverStandingsUseCase = GetDriverStandingsUseCase(fakeRepository),
+            getConstructorStandingsUseCase = GetConstructorStandingsUseCase(fakeRepository),
             getRaceScheduleUseCase = GetRaceScheduleUseCase(fakeRepository),
             getRaceResultsUseCase = GetRaceResultsUseCase(fakeRepository),
             getWikipediaSummaryUseCase = GetWikipediaSummaryUseCase(fakeRepository),
+            getPitStopsUseCase = GetPitStopsUseCase(fakeRepository),
+            getDriverResultsBySeasonUseCase = GetDriverResultsBySeasonUseCase(fakeRepository),
+            getConstructorDriversBySeasonUseCase = GetConstructorDriversBySeasonUseCase(fakeRepository),
             ioDispatcher = testDispatcher
         )
 
@@ -60,9 +68,13 @@ class F1ViewModelTest {
         val viewModel = F1ViewModel(
             getDriversUseCase = GetDriversUseCase(fakeRepository),
             getDriverStandingsUseCase = GetDriverStandingsUseCase(fakeRepository),
+            getConstructorStandingsUseCase = GetConstructorStandingsUseCase(fakeRepository),
             getRaceScheduleUseCase = GetRaceScheduleUseCase(fakeRepository),
             getRaceResultsUseCase = GetRaceResultsUseCase(fakeRepository),
             getWikipediaSummaryUseCase = GetWikipediaSummaryUseCase(fakeRepository),
+            getPitStopsUseCase = GetPitStopsUseCase(fakeRepository),
+            getDriverResultsBySeasonUseCase = GetDriverResultsBySeasonUseCase(fakeRepository),
+            getConstructorDriversBySeasonUseCase = GetConstructorDriversBySeasonUseCase(fakeRepository),
             ioDispatcher = testDispatcher
         )
 

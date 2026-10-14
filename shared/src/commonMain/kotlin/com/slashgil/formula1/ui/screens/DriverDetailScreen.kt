@@ -1,6 +1,7 @@
 package com.slashgil.formula1.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.slashgil.formula1.domain.model.Race
 import com.slashgil.formula1.ui.DetailItem
 import com.slashgil.formula1.ui.F1UiState
 import com.slashgil.formula1.ui.F1ViewModel
@@ -40,6 +43,7 @@ import com.slashgil.formula1.ui.components.StatBox
 import com.slashgil.formula1.ui.theme.F1Dark
 import com.slashgil.formula1.ui.theme.F1Red
 import com.slashgil.formula1.ui.theme.F1Surface
+import com.slashgil.formula1.ui.theme.F1SurfaceVariant
 import com.slashgil.formula1.ui.theme.F1TextPrimary
 import com.slashgil.formula1.ui.theme.F1TextSecondary
 import com.slashgil.formula1.ui.theme.F1Theme
@@ -48,6 +52,7 @@ import com.slashgil.formula1.ui.theme.F1Theme
 fun DriverDetailScreen(
     driverId: String,
     viewModel: F1ViewModel,
+    onRaceClick: (Race) -> Unit,
     onBack: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -157,6 +162,71 @@ fun DriverDetailScreen(
                             StatBox(label = "POSITION", value = "P${detail.standing.position}")
                             StatBox(label = "POINTS", value = "${detail.standing.points}")
                             StatBox(label = "WINS", value = "${detail.standing.wins}")
+                        }
+                        Spacer(modifier = Modifier.height(12.dp))
+                    }
+
+                    // Season Race Results History
+                    if (detail.isLoadingRaces) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(80.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = F1Red)
+                        }
+                    } else if (detail.seasonRaces.isNotEmpty()) {
+                        Text(text = "SEASON RACE RESULTS", color = F1TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        detail.seasonRaces.forEach { race ->
+                            val raceResult = race.results?.firstOrNull()
+                            val posStr = if (raceResult != null) "P${raceResult.position}" else "R${race.round}"
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(6.dp))
+                                    .background(F1Surface)
+                                    .border(1.dp, F1SurfaceVariant, RoundedCornerShape(6.dp))
+                                    .clickable { onRaceClick(race) }
+                                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = posStr,
+                                        color = if (raceResult?.position == 1) F1Red else Color.White,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 12.sp,
+                                        modifier = Modifier.width(36.dp)
+                                    )
+                                    Column {
+                                        Text(
+                                            text = race.raceName.uppercase(),
+                                            color = F1TextPrimary,
+                                            fontWeight = FontWeight.Bold,
+                                            fontStyle = FontStyle.Italic,
+                                            fontSize = 12.sp
+                                        )
+                                        Text(
+                                            text = "${race.circuit.circuitName} // ${race.date}",
+                                            color = F1TextSecondary,
+                                            fontSize = 10.sp
+                                        )
+                                    }
+                                }
+
+                                if (raceResult != null) {
+                                    Text(
+                                        text = "+${raceResult.points} PTS",
+                                        color = F1Red,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 11.sp
+                                    )
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
                         }
                         Spacer(modifier = Modifier.height(12.dp))
                     }

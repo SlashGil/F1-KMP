@@ -64,6 +64,9 @@ fun AppNavHost(
             DriverDetailScreen(
                 driverId = driverId,
                 viewModel = viewModel,
+                onRaceClick = { race ->
+                    navController.navigate(Screen.RaceDetail.createRoute(race.season, race.round))
+                },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -76,6 +79,9 @@ fun AppNavHost(
             ConstructorDetailScreen(
                 constructorId = constructorId,
                 viewModel = viewModel,
+                onDriverClick = { driver ->
+                    navController.navigate(Screen.DriverDetail.createRoute(driver.driverId))
+                },
                 onBack = { navController.popBackStack() }
             )
         }

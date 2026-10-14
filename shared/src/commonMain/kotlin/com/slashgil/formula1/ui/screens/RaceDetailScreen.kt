@@ -206,6 +206,46 @@ fun RaceDetailScreen(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
 
+                    // Pit Stops Section
+                    if (detail.isLoadingPitStops) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth().height(60.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(color = F1Red)
+                        }
+                    } else if (detail.pitStops.isNotEmpty()) {
+                        Text(text = "PIT STOPS TELEMETRY", color = F1TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(6.dp))
+
+                        detail.pitStops.take(15).forEach { pitStop ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clip(RoundedCornerShape(4.dp))
+                                    .background(F1Surface)
+                                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = "STOP #${pitStop.stop} // LAP ${pitStop.lap}",
+                                    color = F1TextPrimary,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = "DRIVER: ${pitStop.driverId.uppercase()} // ${pitStop.duration}s",
+                                    color = F1Red,
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(4.dp))
+                        }
+                        Spacer(modifier = Modifier.height(10.dp))
+                    }
+
                     if (wiki?.extract != null) {
                         Text(text = "CIRCUIT OVERVIEW", color = F1TextSecondary, fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(4.dp))
