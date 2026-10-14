@@ -1,0 +1,104 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Asphalt Background -->
+    <path
+        android:fillColor="#15151C"
+        android:pathData="M0,0h512v512h-512z" />
+
+    <!-- Kerb Curve (Red & White) -->
+    <path
+        android:fillColor="#E10600"
+        android:pathData="M450,0 L512,0 L512,512 L400,512 Z" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M460,0 L512,0 L512,60 L447,60 Z M445,120 L512,120 L512,180 L431,180 Z M430,240 L512,240 L512,300 L416,300 Z M415,360 L512,360 L512,420 L401,420 Z M400,480 L512,480 L512,512 L392,512 Z" />
+
+    <!-- Wind/Speed Streams -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="4"
+        android:strokeAlpha="0.15"
+        android:strokeLineCap="round"
+        android:pathData="M120,180 L180,180" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"
+        android:strokeAlpha="0.1"
+        android:strokeLineCap="round"
+        android:pathData="M90,260 L160,260" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="5"
+        android:strokeAlpha="0.15"
+        android:strokeLineCap="round"
+        android:pathData="M110,340 L200,340" />
+
+    <!-- Centered Car Artwork with comfortable margins (68% scale) -->
+    <group
+        android:pivotX="256"
+        android:pivotY="256"
+        android:scaleX="0.68"
+        android:scaleY="0.68">
+
+        <!-- F1 Rear Wing -->
+        <path
+            android:fillColor="#1E1E24"
+            android:pathData="M216,380h80v18h-80z" />
+        <path
+            android:fillColor="#E10600"
+            android:pathData="M210,376h6v26h-6z M296,376h6v26h-6z" />
+
+        <!-- Rear Tires -->
+        <path
+            android:fillColor="#0D0D11"
+            android:pathData="M186,316h30v54h-30z M296,316h30v54h-30z" />
+        <path
+            android:fillColor="#2E2E3A"
+            android:pathData="M216,338h80v10h-80z" />
+
+        <!-- Body & Sidepods -->
+        <path
+            android:fillColor="#E10600"
+            android:pathData="M230,330 Q210,270 236,190 L276,190 Q302,270 282,330 Z" />
+        <path
+            android:fillColor="#1E1E24"
+            android:pathData="M232,320 L280,320 L280,344 L232,344 Z" />
+
+        <!-- T-Cam -->
+        <path
+            android:fillColor="#1E1E24"
+            android:pathData="M246,225 L266,225 L262,255 L250,255 Z" />
+        <path
+            android:fillColor="#FFCC00"
+            android:pathData="M252,218h8v6h-8z" />
+
+        <!-- Front Tires & Suspension -->
+        <path
+            android:fillColor="#0D0D11"
+            android:pathData="M194,146h24v46h-24z M294,146h24v46h-24z" />
+        <path
+            android:fillColor="#2E2E3A"
+            android:pathData="M206,164 L240,168 L240,172 L206,170 Z M306,164 L272,168 L272,172 L306,170 Z" />
+
+        <!-- Nose & Front Wing -->
+        <path
+            android:fillColor="#E10600"
+            android:pathData="M242,194 L270,194 L262,108 L250,108 Z" />
+        <path
+            android:fillColor="#1E1E24"
+            android:pathData="M190,114h132v12h-132z" />
+        <path
+            android:fillColor="#E10600"
+            android:pathData="M190,110h30v6h-30z M292,110h30v6h-30z" />
+
+        <!-- Halo -->
+        <path
+            android:fillColor="#FFFFFF"
+            android:fillAlpha="0.9"
+            android:pathData="M240,244 C240,220 272,220 272,244 L260,272 L252,272 Z" />
+    </group>
+</vector>

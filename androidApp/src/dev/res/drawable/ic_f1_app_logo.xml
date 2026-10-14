@@ -1,0 +1,89 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Background Blueprint -->
+    <path
+        android:fillColor="#0D1117"
+        android:pathData="M0,0h512v512h-512z" />
+
+    <!-- Grid -->
+    <path
+        android:strokeColor="#1F2937"
+        android:strokeWidth="2"
+        android:pathData="M0,64h512M0,128h512M0,192h512M0,256h512M0,320h512M0,384h512M0,448h512M64,0v512M128,0v512M192,0v512M256,0v512M320,0v512M384,0v512M448,0v512" />
+
+    <!-- Debug Banner Stripe -->
+    <path
+        android:fillColor="#FACC15"
+        android:pathData="M0,0 L160,0 L0,160 Z" />
+    <path
+        android:fillColor="#0D1117"
+        android:pathData="M40,0 L80,0 L0,80 L0,40 Z M120,0 L160,0 L0,160 L0,120 Z" />
+
+    <!-- Centered Car Artwork with comfortable margins (68% scale) -->
+    <group
+        android:pivotX="256"
+        android:pivotY="256"
+        android:scaleX="0.68"
+        android:scaleY="0.68">
+
+        <!-- Rear Wing -->
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M216,380h80v18h-80z" />
+
+        <!-- Rear Tires -->
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M186,316h30v54h-30z M296,316h30v54h-30z" />
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M216,343h80" />
+
+        <!-- Chassis Body -->
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M230,330 Q210,270 236,190 L276,190 Q302,270 282,330 Z" />
+
+        <!-- Cockpit / Halo -->
+        <path
+            android:strokeColor="#E10600"
+            android:strokeWidth="4"
+            android:pathData="M256,240a16,16 0 1,0 0.1,0" />
+
+        <!-- Front Tires -->
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M194,146h24v46h-24z M294,146h24v46h-24z" />
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M206,168h100" />
+
+        <!-- Nose -->
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M242,194 L270,194 L262,108 L250,108 Z" />
+        <path
+            android:strokeColor="#58A6FF"
+            android:strokeWidth="5"
+            android:pathData="M190,114h132v12h-132z" />
+
+        <!-- Telemetry Nodes -->
+        <path
+            android:fillColor="#E10600"
+            android:pathData="M256,108a8,8 0 1,0 0.1,0 M256,380a8,8 0 1,0 0.1,0" />
+        <path
+            android:fillColor="#FACC15"
+            android:pathData="M198,168a6,6 0 1,0 0.1,0 M314,168a6,6 0 1,0 0.1,0 M201,343a6,6 0 1,0 0.1,0 M311,343a6,6 0 1,0 0.1,0" />
+    </group>
+</vector>

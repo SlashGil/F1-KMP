@@ -14,6 +14,8 @@ dependencies {
     implementation(project(":shared"))
 
     implementation(libs.androidx.activity.compose)
+    implementation(libs.compose.foundation)
+    implementation(libs.compose.ui)
     implementation(libs.koin.core)
     implementation(libs.koin.compose)
 
@@ -31,7 +33,23 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        manifestPlaceholders["appName"] = "F1 Telemetry"
     }
+
+    flavorDimensions += "environment"
+    productFlavors {
+        create("dev") {
+            dimension = "environment"
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+            manifestPlaceholders["appName"] = "F1 Telemetry (Dev)"
+        }
+        create("prod") {
+            dimension = "environment"
+            manifestPlaceholders["appName"] = "F1 Telemetry"
+        }
+    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -52,5 +70,6 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
