@@ -7,6 +7,8 @@ import com.slashgil.formula1.domain.model.Constructor
 import com.slashgil.formula1.domain.model.ConstructorStanding
 import com.slashgil.formula1.domain.model.Driver
 import com.slashgil.formula1.domain.model.DriverStanding
+import com.slashgil.formula1.domain.model.LapTiming
+import com.slashgil.formula1.domain.model.PitStop
 import com.slashgil.formula1.domain.model.Race
 import com.slashgil.formula1.domain.model.RaceResult
 import com.slashgil.formula1.domain.repository.F1Repository
@@ -122,6 +124,46 @@ class F1RepositoryImpl(
             } else {
                 Result.failure(IllegalStateException("No Wikipedia summary found for $wikiUrl"))
             }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getPitStops(season: String, round: Int): Result<List<PitStop>> = withContext(Dispatchers.IO) {
+        try {
+            val dtos = apiService.getPitStops(season, round)
+            Result.success(dtos.map { it.toDomain() })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getLapTimes(season: String, round: Int): Result<List<LapTiming>> = withContext(Dispatchers.IO) {
+        try {
+            val dtos = apiService.getLapTimes(season, round)
+            val timings = dtos.flatMap { lapDto ->
+                val lapNum = lapDto.number.toIntOrNull() ?: 0
+                lapDto.timings.map { it.toDomain(lapNum) }
+            }
+            Result.success(timings)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getDriverResultsBySeason(season: String, driverId: String): Result<List<Race>> = withContext(Dispatchers.IO) {
+        try {
+            val dtos = apiService.getDriverResultsBySeason(season, driverId)
+            Result.success(dtos.map { it.toDomain() })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getConstructorDriversBySeason(season: String, constructorId: String): Result<List<Driver>> = withContext(Dispatchers.IO) {
+        try {
+            val dtos = apiService.getConstructorDriversBySeason(season, constructorId)
+            Result.success(dtos.map { it.toDomain() })
         } catch (e: Exception) {
             Result.failure(e)
         }

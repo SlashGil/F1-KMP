@@ -7,9 +7,13 @@ import com.slashgil.formula1.data.remote.ErgastApiServiceImpl
 import com.slashgil.formula1.data.repository.F1RepositoryImpl
 import com.slashgil.formula1.db.F1Database
 import com.slashgil.formula1.domain.repository.F1Repository
+import com.slashgil.formula1.domain.usecase.GetConstructorDriversBySeasonUseCase
 import com.slashgil.formula1.domain.usecase.GetConstructorStandingsUseCase
+import com.slashgil.formula1.domain.usecase.GetDriverResultsBySeasonUseCase
 import com.slashgil.formula1.domain.usecase.GetDriverStandingsUseCase
 import com.slashgil.formula1.domain.usecase.GetDriversUseCase
+import com.slashgil.formula1.domain.usecase.GetLapTimesUseCase
+import com.slashgil.formula1.domain.usecase.GetPitStopsUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceResultsUseCase
 import com.slashgil.formula1.domain.usecase.GetRaceScheduleUseCase
 import com.slashgil.formula1.domain.usecase.GetWikipediaSummaryUseCase
@@ -51,10 +55,14 @@ val domainModule = module {
     factory { GetConstructorStandingsUseCase(get()) }
     factory { GetRaceResultsUseCase(get()) }
     factory { GetWikipediaSummaryUseCase(get()) }
+    factory { GetPitStopsUseCase(get()) }
+    factory { GetLapTimesUseCase(get()) }
+    factory { GetDriverResultsBySeasonUseCase(get()) }
+    factory { GetConstructorDriversBySeasonUseCase(get()) }
 }
 
 val viewModelModule = module {
-    factory { F1ViewModel(get(), get(), get(), get(), get()) }
+    factory { F1ViewModel(get(), get(), get(), get(), get(), get(), get(), get(), get()) }
 }
 
 fun initKoin(appDeclaration: KoinAppDeclaration = {}) =

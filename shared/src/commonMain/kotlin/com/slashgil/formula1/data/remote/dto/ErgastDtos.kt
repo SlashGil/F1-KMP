@@ -6,7 +6,9 @@ import com.slashgil.formula1.domain.model.ConstructorStanding
 import com.slashgil.formula1.domain.model.Driver
 import com.slashgil.formula1.domain.model.DriverStanding
 import com.slashgil.formula1.domain.model.FastestLap
+import com.slashgil.formula1.domain.model.LapTiming
 import com.slashgil.formula1.domain.model.Location
+import com.slashgil.formula1.domain.model.PitStop
 import com.slashgil.formula1.domain.model.Race
 import com.slashgil.formula1.domain.model.RaceResult
 import kotlinx.serialization.SerialName
@@ -32,6 +34,77 @@ data class WikipediaImageDto(
 data class ErgastResponse<T>(
     @SerialName("MRData") val mrData: T
 )
+
+@Serializable
+data class PitStopDataResponse(
+    @SerialName("RaceTable") val raceTable: RaceTablePitStopDto? = null
+)
+
+@Serializable
+data class RaceTablePitStopDto(
+    val season: String? = null,
+    val round: String? = null,
+    @SerialName("Races") val races: List<RacePitStopDto> = emptyList()
+)
+
+@Serializable
+data class RacePitStopDto(
+    @SerialName("PitStops") val pitStops: List<PitStopDto> = emptyList()
+)
+
+@Serializable
+data class PitStopDto(
+    val driverId: String = "",
+    val stop: String = "0",
+    val lap: String = "0",
+    val time: String = "",
+    val duration: String = ""
+) {
+    fun toDomain(): PitStop = PitStop(
+        driverId = driverId,
+        stop = stop.toIntOrNull() ?: 0,
+        lap = lap.toIntOrNull() ?: 0,
+        time = time,
+        duration = duration
+    )
+}
+
+@Serializable
+data class LapDataResponse(
+    @SerialName("RaceTable") val raceTable: RaceTableLapDto? = null
+)
+
+@Serializable
+data class RaceTableLapDto(
+    val season: String? = null,
+    val round: String? = null,
+    @SerialName("Races") val races: List<RaceLapDto> = emptyList()
+)
+
+@Serializable
+data class RaceLapDto(
+    @SerialName("Laps") val laps: List<LapDto> = emptyList()
+)
+
+@Serializable
+data class LapDto(
+    val number: String = "0",
+    @SerialName("Timings") val timings: List<TimingDto> = emptyList()
+)
+
+@Serializable
+data class TimingDto(
+    val driverId: String = "",
+    val position: String = "0",
+    val time: String = ""
+) {
+    fun toDomain(lapNumber: Int): LapTiming = LapTiming(
+        lapNumber = lapNumber,
+        driverId = driverId,
+        position = position.toIntOrNull() ?: 0,
+        time = time
+    )
+}
 
 @Serializable
 data class DriverDataResponse(
