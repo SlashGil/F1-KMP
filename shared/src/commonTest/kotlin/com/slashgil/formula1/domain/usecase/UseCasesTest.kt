@@ -7,7 +7,9 @@ import com.slashgil.formula1.domain.model.Constructor
 import com.slashgil.formula1.domain.model.ConstructorStanding
 import com.slashgil.formula1.domain.model.Driver
 import com.slashgil.formula1.domain.model.DriverStanding
+import com.slashgil.formula1.domain.model.LapTiming
 import com.slashgil.formula1.domain.model.Location
+import com.slashgil.formula1.domain.model.PitStop
 import com.slashgil.formula1.domain.model.Race
 import com.slashgil.formula1.domain.model.RaceResult
 import com.slashgil.formula1.domain.repository.F1Repository
@@ -29,6 +31,8 @@ class FakeF1Repository : F1Repository {
         extract = "Max Emilian Verstappen is a Dutch racing driver.",
         thumbnail = WikipediaImageDto("https://example.com/verstappen.jpg", 320, 427)
     )
+    val samplePitStop = PitStop("verstappen", 1, 18, "15:25:30", "2.1")
+    val sampleLapTiming = LapTiming(1, "verstappen", 1, "1:07.411")
 
     override suspend fun getDrivers(season: String?): Result<List<Driver>> = Result.success(listOf(sampleDriver))
     override suspend fun getDriverDetails(driverId: String): Result<Driver> = Result.success(sampleDriver)
@@ -38,6 +42,10 @@ class FakeF1Repository : F1Repository {
     override suspend fun getDriverStandings(season: String): Result<List<DriverStanding>> = Result.success(listOf(sampleDriverStanding))
     override suspend fun getConstructorStandings(season: String): Result<List<ConstructorStanding>> = Result.success(listOf(sampleConstructorStanding))
     override suspend fun getWikipediaSummary(wikiUrl: String): Result<WikipediaSummaryDto> = Result.success(sampleWikiSummary)
+    override suspend fun getPitStops(season: String, round: Int): Result<List<PitStop>> = Result.success(listOf(samplePitStop))
+    override suspend fun getLapTimes(season: String, round: Int): Result<List<LapTiming>> = Result.success(listOf(sampleLapTiming))
+    override suspend fun getDriverResultsBySeason(season: String, driverId: String): Result<List<Race>> = Result.success(listOf(sampleRace))
+    override suspend fun getConstructorDriversBySeason(season: String, constructorId: String): Result<List<Driver>> = Result.success(listOf(sampleDriver))
 }
 
 class UseCasesTest {
