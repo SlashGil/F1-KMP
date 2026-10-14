@@ -13,6 +13,22 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
+data class WikipediaSummaryDto(
+    val title: String = "",
+    val extract: String = "",
+    val description: String = "",
+    val thumbnail: WikipediaImageDto? = null,
+    val originalimage: WikipediaImageDto? = null
+)
+
+@Serializable
+data class WikipediaImageDto(
+    val source: String = "",
+    val width: Int = 0,
+    val height: Int = 0
+)
+
+@Serializable
 data class ErgastResponse<T>(
     @SerialName("MRData") val mrData: T
 )

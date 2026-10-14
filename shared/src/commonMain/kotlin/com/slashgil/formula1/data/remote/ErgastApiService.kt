@@ -11,6 +11,7 @@ import com.slashgil.formula1.data.remote.dto.RaceDataResponse
 import com.slashgil.formula1.data.remote.dto.RaceDto
 import com.slashgil.formula1.data.remote.dto.ResultDto
 import com.slashgil.formula1.data.remote.dto.StandingsDataResponse
+import com.slashgil.formula1.data.remote.dto.WikipediaSummaryDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -22,6 +23,7 @@ interface ErgastApiService {
     suspend fun getRaceResults(season: String, round: Int): List<ResultDto>
     suspend fun getDriverStandings(season: String): List<DriverStandingDto>
     suspend fun getConstructorStandings(season: String): List<ConstructorStandingDto>
+    suspend fun getWikipediaSummary(wikiUrl: String): WikipediaSummaryDto?
 }
 
 class ErgastApiServiceImpl(
@@ -59,5 +61,17 @@ class ErgastApiServiceImpl(
     override suspend fun getConstructorStandings(season: String): List<ConstructorStandingDto> {
         val response = client.get("$baseUrl/$season/constructorStandings.json").body<ErgastResponse<StandingsDataResponse>>()
         return response.mrData.standingsTable?.standingsLists?.firstOrNull()?.constructorStandings ?: emptyList()
+    }
+
+    override suspend fun getWikipediaSummary(wikiUrl: String): WikipediaSummaryDto? {
+        if (wikiUrl.isBlank()) return null
+        return try {
+            val titleSlug = wikiUrl.substringAfterLast("/")
+            if (titleSlug.isBlank()) return null
+            val summaryUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/$titleSlug"
+            client.get(summaryUrl).body<WikipediaSummaryDto>()
+        } catch (e: Exception) {
+            null
+        }
     }
 }

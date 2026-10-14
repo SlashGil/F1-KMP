@@ -2,6 +2,7 @@ package com.slashgil.formula1.data.repository
 
 import com.slashgil.formula1.data.local.F1LocalDataSource
 import com.slashgil.formula1.data.remote.ErgastApiService
+import com.slashgil.formula1.data.remote.dto.WikipediaSummaryDto
 import com.slashgil.formula1.domain.model.Constructor
 import com.slashgil.formula1.domain.model.ConstructorStanding
 import com.slashgil.formula1.domain.model.Driver
@@ -9,14 +10,17 @@ import com.slashgil.formula1.domain.model.DriverStanding
 import com.slashgil.formula1.domain.model.Race
 import com.slashgil.formula1.domain.model.RaceResult
 import com.slashgil.formula1.domain.repository.F1Repository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
 
 class F1RepositoryImpl(
     private val apiService: ErgastApiService,
     private val localDataSource: F1LocalDataSource
 ) : F1Repository {
 
-    override suspend fun getDrivers(season: String?): Result<List<Driver>> {
-        return try {
+    override suspend fun getDrivers(season: String?): Result<List<Driver>> = withContext(Dispatchers.IO) {
+        try {
             val remoteDtos = apiService.getDrivers(season)
             val domainDrivers = remoteDtos.map { it.toDomain() }
             if (domainDrivers.isNotEmpty()) {
@@ -33,8 +37,8 @@ class F1RepositoryImpl(
         }
     }
 
-    override suspend fun getDriverDetails(driverId: String): Result<Driver> {
-        return try {
+    override suspend fun getDriverDetails(driverId: String): Result<Driver> = withContext(Dispatchers.IO) {
+        try {
             val drivers = getDrivers().getOrNull()
             val driver = drivers?.firstOrNull { it.driverId == driverId }
             if (driver != null) {
@@ -47,8 +51,8 @@ class F1RepositoryImpl(
         }
     }
 
-    override suspend fun getConstructors(season: String?): Result<List<Constructor>> {
-        return try {
+    override suspend fun getConstructors(season: String?): Result<List<Constructor>> = withContext(Dispatchers.IO) {
+        try {
             val remoteDtos = apiService.getConstructors(season)
             Result.success(remoteDtos.map { it.toDomain() })
         } catch (e: Exception) {
@@ -56,8 +60,8 @@ class F1RepositoryImpl(
         }
     }
 
-    override suspend fun getSchedule(season: String): Result<List<Race>> {
-        return try {
+    override suspend fun getSchedule(season: String): Result<List<Race>> = withContext(Dispatchers.IO) {
+        try {
             val remoteDtos = apiService.getSchedule(season)
             val domainRaces = remoteDtos.map { it.toDomain() }
             if (domainRaces.isNotEmpty()) {
@@ -74,8 +78,8 @@ class F1RepositoryImpl(
         }
     }
 
-    override suspend fun getRaceResults(season: String, round: Int): Result<List<RaceResult>> {
-        return try {
+    override suspend fun getRaceResults(season: String, round: Int): Result<List<RaceResult>> = withContext(Dispatchers.IO) {
+        try {
             val remoteDtos = apiService.getRaceResults(season, round)
             Result.success(remoteDtos.map { it.toDomain() })
         } catch (e: Exception) {
@@ -83,8 +87,8 @@ class F1RepositoryImpl(
         }
     }
 
-    override suspend fun getDriverStandings(season: String): Result<List<DriverStanding>> {
-        return try {
+    override suspend fun getDriverStandings(season: String): Result<List<DriverStanding>> = withContext(Dispatchers.IO) {
+        try {
             val remoteDtos = apiService.getDriverStandings(season)
             val domainStandings = remoteDtos.map { it.toDomain() }
             if (domainStandings.isNotEmpty()) {
@@ -101,10 +105,23 @@ class F1RepositoryImpl(
         }
     }
 
-    override suspend fun getConstructorStandings(season: String): Result<List<ConstructorStanding>> {
-        return try {
+    override suspend fun getConstructorStandings(season: String): Result<List<ConstructorStanding>> = withContext(Dispatchers.IO) {
+        try {
             val remoteDtos = apiService.getConstructorStandings(season)
             Result.success(remoteDtos.map { it.toDomain() })
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun getWikipediaSummary(wikiUrl: String): Result<WikipediaSummaryDto> = withContext(Dispatchers.IO) {
+        try {
+            val summary = apiService.getWikipediaSummary(wikiUrl)
+            if (summary != null) {
+                Result.success(summary)
+            } else {
+                Result.failure(IllegalStateException("No Wikipedia summary found for $wikiUrl"))
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
